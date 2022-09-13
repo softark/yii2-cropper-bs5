@@ -1,27 +1,42 @@
 <?php
 
-namespace bilginnet\cropper;
-
+namespace softark\cropper;
 
 use yii\web\AssetBundle;
 use yii\web\View;
 
 /**
  * @author Ercan Bilgin <bilginnet@gmail.com>
+ * @author Nobuo Kihara <softark@gmail.com>
  */
 class CropperAsset extends AssetBundle
 {
-    public $sourcePath = '@bilginnet/cropper/assets';
-    public $jsOptions = ['position' => View::POS_END];
+    public $sourcePath = '@bower';
     public $css = [
-        'cropper.css',
+        'cropperjs/dist/cropper.min.css',
     ];
     public $js = [
-        'cropper.js'
+        'cropperjs/dist/cropper.min.js',
+        'jquery-cropper/dist/jquery-cropper.min.js'
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapAsset',
-        'yii\bootstrap\BootstrapPluginAsset',
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function init()
+    {
+        if (YII_DEBUG) {
+            foreach ($this->js as $k => $js) {
+                $this->js[$k] = str_replace('.min', '', $js);
+            }
+            foreach ($this->css as $k => $css) {
+                $this->css[$k] = str_replace('.min', '', $css);
+            }
+        }
+
+        parent::init();
+    }
 }

@@ -1,11 +1,17 @@
 <?php
 return [
     'Image Crop Editor' => '画像切り抜きエディタ',
-    'Browse' => '参照',
-    'Crop' => '切り抜き',
-    'Close' => '完了',
+    'Browse' => '参照 ...',
+    'Crop' => '切り抜く',
+    'OK' => 'OK',
+    'Cancel' => 'キャンセル',
     'Width' => '幅',
     'Height' => '高さ',
-    'Either "cropWidth" and "cropHeight" properties must be specified.' => '"cropWidth" または "cropHeight" のどちらかを指定する必要があります。',
-    'Double click: toggle between "move image" or "redraw area".' => 'ダブル・クリック: "画像の移動" と "領域再指定" を切り替えます。',
+    // help message
+    'Mouse wheel' => 'マウス・ホイール',
+    'Zoom' => 'ズーム',
+    'Outside cropping rect' => '切り抜き矩形の外側',
+    'Set rect' => '矩形再設定',
+    'Scroll image' => '画像スクロール',
+    '(Double click to change mode)' => '(ダブルクリックでモード変更)',
 ];

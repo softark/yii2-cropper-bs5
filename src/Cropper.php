@@ -1,17 +1,15 @@
 <?php
 
-namespace bilginnet\cropper;
+namespace softark\cropper;
 
-
-use Yii;
 use yii\base\InvalidConfigException;
-use yii\bootstrap\InputWidget;
+use yii\bootstrap5\InputWidget;
 use yii\helpers\ArrayHelper;
-use yii\helpers\StringHelper;
 use yii\web\View;
 
 /**
  * @author Ercan Bilgin <bilginnet@gmail.com>
+ * @author Nobuo Kihara <softark@gmail.com>
  */
 class Cropper extends InputWidget
 {
@@ -52,14 +50,8 @@ class Cropper extends InputWidget
      * buttonCssClass string // default 'btn btn-primary'
      *
      * icons array
-     *     [
-     *          browse
-     *          crop
-     *          close
-     *     ]
      *
      * @var $cropperOptions []
-     *
      */
     public $cropperOptions;
 
@@ -82,7 +74,9 @@ class Cropper extends InputWidget
      *
      * @var string
      */
-    public $template = '{button} {preview}';
+    public $template = '{preview}{button}';
+
+    public $modalOptions;
 
     public function init()
     {
@@ -101,7 +95,7 @@ class Cropper extends InputWidget
         parent::run();
 
         $this->view->registerCss('
-            label[for='.$this->options['id'].'] {
+            label[for=' . $this->options['id'] . '] {
                 display: none;
             }
         ');
@@ -117,6 +111,7 @@ class Cropper extends InputWidget
             'cropperOptions' => $this->cropperOptions,
             'jsOptions' => $this->jsOptions,
             'template' => $this->template,
+            'modalOptions' => $this->modalOptions,
         ]);
     }
 
@@ -134,27 +129,15 @@ class Cropper extends InputWidget
     {
         $options = $this->cropperOptions;
 
-        if (!isset($options['width']) && !isset($options['height'])) {
-            throw new InvalidConfigException(Yii::t('cropper', 'Either "cropWidth" and "cropHeight" properties must be specified.'));
+        if (!isset($options['width']) || !isset($options['height'])) {
+            throw new InvalidConfigException('Both "cropWidth" and "cropHeight" must be specified.');
         }
-
-        //$aspectRatio = $options['width'] / $options['height'];
-
-        /*if (!isset($options['preview']['width'])) {
-            $defaultPreviewWidth = 100;
-            if ($options['width'] < $defaultPreviewWidth)
-                $options['preview']['width'] = $options['width'];
-            else
-                $options['preview']['width'] = $defaultPreviewWidth;
-        }
-        if (!isset($options['preview']['height'])) $options['preview']['height'] = $options['preview']['width'] / $aspectRatio; */
-
 
         // preview options
         if (isset($options['preview']) && $options['preview'] !== false) {
             if (!isset($options['preview']['url'])) {
                 $options['preview']['url'] = null;
-            } else if (empty($options['preview']['url'])){
+            } else if (empty($options['preview']['url'])) {
                 $options['preview']['url'] = null;
             }
             $previewSizes = $this->getPreviewSizes($options);
@@ -164,23 +147,44 @@ class Cropper extends InputWidget
             $options['preview'] = false;
         }
 
-
         // button & icons options
         if (!isset($options['buttonCssClass'])) $options['buttonCssClass'] = 'btn btn-primary';
-        if (!isset($options['icons']['browse'])) $options['icons']['browse'] = '<i class="fa fa-image"></i>';
-        if (!isset($options['icons']['crop'])) $options['icons']['crop'] = '<i class="fa fa-crop"></i>';
-        if (!isset($options['icons']['close'])) $options['icons']['close'] = '<i class="fa fa-crop"></i>';
-        if (!isset($options['icons']['zoom-in'])) $options['icons']['zoom-in'] = '<i class="fa fa-search-plus"></i>';
-        if (!isset($options['icons']['zoom-out'])) $options['icons']['zoom-out'] = '<i class="fa fa-search-minus"></i>';
-        if (!isset($options['icons']['rotate-left'])) $options['icons']['rotate-left'] = '<i class="fa fa-rotate-left"></i>';
-        if (!isset($options['icons']['rotate-right'])) $options['icons']['rotate-right'] = '<i class="fa fa-rotate-right"></i>';
-        if (!isset($options['icons']['flip-horizontal'])) $options['icons']['flip-horizontal'] = '<i class="fa fa-arrows-h"></i>';
-        if (!isset($options['icons']['flip-vertical'])) $options['icons']['flip-vertical'] = '<i class="fa fa-arrows-v"></i>';
-        if (!isset($options['icons']['move-left'])) $options['icons']['move-left'] = '<i class="fa fa-arrow-left"></i>';
-        if (!isset($options['icons']['move-right'])) $options['icons']['move-right'] = '<i class="fa fa-arrow-right"></i>';
-        if (!isset($options['icons']['move-up'])) $options['icons']['move-up'] = '<i class="fa fa-arrow-up"></i>';
-        if (!isset($options['icons']['move-down'])) $options['icons']['move-down'] = '<i class="fa fa-arrow-down"></i>';
-
+        if (!isset($options['useFontAwesome'])) $options['useFontAwesome'] = false;
+        if ($options['useFontAwesome']) {
+            if (!isset($options['icons']['browse'])) $options['icons']['browse'] = '<i class="fa-solid fa-folder-open"></i>';
+            if (!isset($options['icons']['crop'])) $options['icons']['crop'] = '<i class="fa-solid fa-crop"></i>';
+            if (!isset($options['icons']['ok'])) $options['icons']['ok'] = '<i class="fa-solid fa-check"></i>';
+            if (!isset($options['icons']['cancel'])) $options['icons']['cancel'] = '<i class="fa-solid fa-xmark"></i>';
+            if (!isset($options['icons']['zoom-in'])) $options['icons']['zoom-in'] = '<i class="fa-solid fa-magnifying-glass-plus"></i>';
+            if (!isset($options['icons']['zoom-out'])) $options['icons']['zoom-out'] = '<i class="fa-solid fa-magnifying-glass-minus"></i>';
+            if (!isset($options['icons']['rotate-left'])) $options['icons']['rotate-left'] = '<i class="fa-solid fa-arrow-rotate-left"></i>';
+            if (!isset($options['icons']['rotate-right'])) $options['icons']['rotate-right'] = '<i class="fa-solid fa-arrow-rotate-right"></i>';
+            if (!isset($options['icons']['flip-horizontal'])) $options['icons']['flip-horizontal'] = '<i class="fa-solid fa-arrows-h"></i>';
+            if (!isset($options['icons']['flip-vertical'])) $options['icons']['flip-vertical'] = '<i class="fa-solid fa-arrows-v"></i>';
+            if (!isset($options['icons']['move-left'])) $options['icons']['move-left'] = '<i class="fa-solid fa-arrow-left"></i>';
+            if (!isset($options['icons']['move-right'])) $options['icons']['move-right'] = '<i class="fa-solid fa-arrow-right"></i>';
+            if (!isset($options['icons']['move-up'])) $options['icons']['move-up'] = '<i class="fa-solid fa-arrow-up"></i>';
+            if (!isset($options['icons']['move-down'])) $options['icons']['move-down'] = '<i class="fa-solid fa-arrow-down"></i>';
+            if (!isset($options['icons']['cursor-cross-hair'])) $options['icons']['cursor-cross-hair'] = '<i class="fa-solid fa-plus"></i>';
+            if (!isset($options['icons']['cursor-move'])) $options['icons']['cursor-scroll'] = '<i class="fa-solid fa-arrows-up-down-left-right"></i>';
+        } else {
+            if (!isset($options['icons']['browse'])) $options['icons']['browse'] = '🗁';
+            if (!isset($options['icons']['crop'])) $options['icons']['crop'] = '⌗';
+            if (!isset($options['icons']['ok'])) $options['icons']['ok'] = '✔';
+            if (!isset($options['icons']['cancel'])) $options['icons']['cancel'] = '🗙';
+            if (!isset($options['icons']['zoom-in'])) $options['icons']['zoom-in'] = '🔍+';
+            if (!isset($options['icons']['zoom-out'])) $options['icons']['zoom-out'] = '🔍-';
+            if (!isset($options['icons']['rotate-left'])) $options['icons']['rotate-left'] = '⭯';
+            if (!isset($options['icons']['rotate-right'])) $options['icons']['rotate-right'] = '⭮';
+            if (!isset($options['icons']['flip-horizontal'])) $options['icons']['flip-horizontal'] = '🡘';
+            if (!isset($options['icons']['flip-vertical'])) $options['icons']['flip-vertical'] = '🡙';
+            if (!isset($options['icons']['move-left'])) $options['icons']['move-left'] = '🡐';
+            if (!isset($options['icons']['move-right'])) $options['icons']['move-right'] = '🡒';
+            if (!isset($options['icons']['move-up'])) $options['icons']['move-up'] = '🡑';
+            if (!isset($options['icons']['move-down'])) $options['icons']['move-down'] = '🡓';
+            if (!isset($options['icons']['cursor-cross-hair'])) $options['icons']['cursor-cross-hair'] = '🞡';
+            if (!isset($options['icons']['cursor-move'])) $options['icons']['cursor-scroll'] = '✥';
+        }
         $this->cropperOptions = $options;
     }
 
@@ -195,11 +199,10 @@ class Cropper extends InputWidget
             if (is_string($options['preview']['width'])) {
                 if (strstr($options['preview']['width'], '%') || strstr($options['preview']['width'], 'px')) {
                     $previewWidth = $options['preview']['width'];
-                } else if ((int) $options['preview']['width'] > 0){
+                } else if ((int)$options['preview']['width'] > 0) {
                     $previewWidth = $options['preview']['width'] . 'px';
                 }
-            }
-            else if (is_integer($options['preview']['width'])) {
+            } else if (is_integer($options['preview']['width'])) {
                 $previewWidth = $options['preview']['width'] . 'px';
             }
         }
@@ -210,7 +213,7 @@ class Cropper extends InputWidget
             if (is_string($options['preview']['height'])) {
                 if (strstr($options['preview']['height'], '%') || strstr($options['preview']['height'], 'px')) {
                     $previewHeight = $options['preview']['height'];
-                } else if ((int) $options['preview']['height'] > 0){
+                } else if ((int)$options['preview']['height'] > 0) {
                     $previewHeight = $options['preview']['height'] . 'px';
                 }
             } else if (is_integer($options['preview']['height'])) {
@@ -236,7 +239,7 @@ class Cropper extends InputWidget
     {
         $posArray = [View::POS_END, View::POS_READY, View::POS_HEAD, View::POS_LOAD, View::POS_BEGIN];
         $jsOptions = $this->jsOptions;
-        if(!isset($jsOptions['pos']) || (isset($jsOptions['pos']) && !ArrayHelper::isIn($jsOptions['pos'], $posArray))) {
+        if (!isset($jsOptions['pos']) || (isset($jsOptions['pos']) && !ArrayHelper::isIn($jsOptions['pos'], $posArray))) {
             $jsOptions['pos'] = View::POS_END;
         }
         $this->jsOptions = $jsOptions;

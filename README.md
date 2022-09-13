@@ -1,16 +1,11 @@
-# yii2-cropper
-Yii2 Image Cropper InputWidget
-
-[![Minimum PHP Version](http://img.shields.io/badge/php-%3E%3D%205.4-8892BF.svg)](https://php.net/)
-[![Latest Stable Version](https://poser.pugx.org/bilginnet/yii2-cropper/v/stable)](https://packagist.org/packages/bilginnet/yii2-cropper)
-[![Total Downloads](https://poser.pugx.org/bilginnet/yii2-cropper/downloads)](https://packagist.org/packages/bilginnet/yii2-cropper)
-[![Latest Unstable Version](https://poser.pugx.org/bilginnet/yii2-cropper/v/unstable)](https://packagist.org/packages/bilginnet/yii2-cropper)
-[![License](https://poser.pugx.org/bilginnet/yii2-cropper/license)](https://packagist.org/packages/bilginnet/yii2-cropper)
-
-<a href="https://fengyuanchen.github.io/cropper/" target="_blank">Cropper.js</a> - Bootstrap Cropper (recommended) (already included).
+# yii2-cropper-bs5
+Yii2 Image Cropper Input Widget for bootstrap 5
 
 Features
-------------
+--------
+This is a wrapper of <a href="https://fengyuanchen.github.io/cropperjs/" target="_blank">fengyuanchen/Cropper.js</a>.
+It provides the following feature:
+
 + Crop
 + Image Rotate
 + Image Flip
@@ -21,6 +16,19 @@ Features
 + Set Image.Url Directly 
 + Set Image.Src With Javascript
 
+Difference from bilginnet/yii2-cropper
+--------------------------------------
+
+This is a fork of [bilginnet/yii2-cropper](https://github.com/bilginnet/yii2-cropper),
+but it has some important difference:
+
++ Works with bootstrap 5
++ Improved UI design of the modal
++ Supports the latest version of Cropper.js through composer
++ Backward incompatibility
+  + Doesn't work with bootstrap 3
+  + Some incompatibility in the options
+
 Installation
 ------------
 
@@ -29,13 +37,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist bilginnet/yii2-cropper "dev-master"
+php composer.phar require --prefer-dist softark/yii2-cropper-bs5 "dev-master"
 ```
 
 or add
 
 ```
-"bilginnet/yii2-cropper": "dev-master"
+"softark/yii2-cropper-bs5": "dev-master"
 ```
 
 to the require section of your `composer.json` file.
@@ -44,22 +52,27 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-Let's add into config in your main-local config file before return[]
-````php
-       $baseUrl = str_replace('/backend/web', '', (new Request)->getBaseUrl());
-       $baseUrl = str_replace('/frontend/web', '', $baseUrl);
+### 1) Add aliases for image directory
 
-       Yii::setAlias('@uploadUrl', $baseUrl.'/uploads/');
-       Yii::setAlias('@uploadPath', realpath(dirname(__FILE__).'/../../uploads/'));
-       // image file will upload in //root/uploads   folder
+Add aliases for the directory to store the images in your config file.
+
+```php
+       $baseUrl = str_replace('/web', '', (new Request)->getBaseUrl());
+
+       Yii::setAlias('@imagesUrl', $baseUrl . '/images/');
+       Yii::setAlias('@imagesPath', realpath(dirname(__FILE__) . '/../images/'));
+       // image file will be stored in //root/images folder
        
        return [
            ....
        ]
-````
+```
 
-Let's add  in your model file
-````php
+### 2) Extend model to handle image data from cropper
+
+Add a virtual attribute for the image data from the cropper widget in your model.
+
+```php
     public $_image
 
     public function rules()
@@ -68,154 +81,87 @@ Let's add  in your model file
             ['_image', 'safe'],
         ];
     }
-    
+```
+
+And write a function to save the image data from the cropper widget.
+
+```php
     public function beforeSave($insert)
     {
         if (is_string($this->_image) && strstr($this->_image, 'data:image')) {
 
-            // creating image file as png
+            // creating image file as png, for example
+            // cropper sends image data in a base64 encoded string
             $data = $this->_image;
             $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $data));
             $fileName = time() . '-' . rand(100000, 999999) . '.png';
-            file_put_contents(Yii::getAlias('@uploadPath') . '/' . $fileName, $data);
+            file_put_contents(Yii::getAlias('@imagesPath') . '/' . $fileName, $data);
 
-
-            // deleting old image 
-            // $this->image is real attribute for filename in table
-            // customize your code for your attribute            
-            if (!$this->isNewRecord && !empty($this->image)) {
-                unlink(Yii::getAlias('@uploadPath/'.$this->image));
+            // deleting old image if any
+            // $this->filename is the real attribute for the filename
+            // customize your code for your attribute
+            if (!$this->isNewRecord && !empty($this->filename)) {
+                @unlink(Yii::getAlias('@imagesPath') . '/' . $this->filename);
             }
             
             // set new filename
-            $this->image = $fileName;
+            $this->filename = $fileName;
         }
 
         return parent::beforeSave($insert);
     }
-````
+```
 
+### 3) Place cropper in _form file
 
+The following is a typical code that appears in _form file:
 
-Advanced usage in _form file
------
-````php
- echo $form->field($model, '_image')->widget(\bilginnet\cropper\Cropper::className(), [
-    /*
-     * elements of this widget
-     *
-     * buttonId          = #cropper-select-button-$uniqueId
-     * previewId         = #cropper-result-$uniqueId
-     * modalId           = #cropper-modal-$uniqueId
-     * imageId           = #cropper-image-$uniqueId
-     * inputChangeUrlId  = #cropper-url-change-input-$uniqueId
-     * closeButtonId     = #close-button-$uniqueId
-     * cropButtonId      = #crop-button-$uniqueId
-     * browseInputId     = #cropper-input-$uniqueId // fileinput in modal
-    */
-    'uniqueId' => 'image_cropper', // will create automaticaly if not set
+```php
+echo $form->field($model, '_image')->widget(\softark\cropper\Cropper::class, [
 
-    // you can set image url directly
-    // you will see this image in the crop area if is set
-    // default null
-    'imageUrl' => Yii::getAlias('@web/image.jpg'),
+    // Unique ID of the cropper. Will be set automatically if not set.
+    'uniqueId' => 'image_cropper',
+
+    // The url of the initial image.
+    // You can set the current image url for update scenario, and
+    // set null for create scenario.
+    // Defaults to null.
+    'imageUrl' => ($model->isNewRecord) ? null : Yii::getAlias('@imagesUrl') . $model->filename,
     
+    // Cropper options
     'cropperOptions' => [
-        'width' => 100, // must be specified
-        'height' => 100, // must be specified
+        // The dimensions of the image to be cropped and saved.
+        // You have to specify both width and height.
+        'width' => 1200,
+        'height' => 800,
 
-        // optional
-        // url must be set in update action
+        // Preview window options
         'preview' => [
-            'url' => '', // (!empty($model->image)) ? Yii::getAlias('@uploadUrl/'.$model->image) : null
-            'width' => 100, // must be specified // you can set as string '100%'
-            'height' => 100, // must be specified // you can set as string '100px'
+            // The dimensions of the preview image must be specified.
+            'width' => 600, // you can set as string '100%'
+            'height' => 400, // you can set as string '100px'
+            // The url of the initial image for the preview.
+            'url' => (!empty($model->filename)) ? Yii::getAlias('@imagesUrl' . '/' . $model->filename) : null,
         ],
 
-        // optional // default following code
-        // you can customize 
-        'buttonCssClass' => 'btn btn-primary',
-
-        // optional // defaults following code
-        // you can customize 
-        'icons' => [
-            'browse' => '<i class="fa fa-image"></i>',
-            'crop' => '<i class="fa fa-crop"></i>',
-            'close' => '<i class="fa fa-crop"></i>',       
-            'zoom-in' => '<i class="fa fa-search-plus"></i>',
-            'zoom-out' => '<i class="fa fa-search-minus"></i>',
-            'rotate-left' => '<i class="fa fa-rotate-left"></i>',
-            'rotate-right' => '<i class="fa fa-rotate-right"></i>',
-            'flip-horizontal' => '<i class="fa fa-arrows-h"></i>',
-            'flip-vertical' => '<i class="fa fa-arrows-v"></i>',
-            'move-left' => '<i class="fa fa-arrow-left"></i>',
-            'move-right' => '<i class="fa fa-arrow-right"></i>',
-            'move-up' => '<i class="fa fa-arrow-up"></i>',
-            'move-down' => '<i class="fa fa-arrow-down"></i>',
-        ]
+        // Whether to use FontAwesome icons
+        'useFontAwesome' => true, // default = false : use Unicode Chars
     ],
-
-    // optional // defaults following code
-    // you can customize 
-    'label' => '$model->attribute->label', 
     
-    // optional // default following code
-    // you can customize 
-    'template' => '{button}{preview}',
-
+    // Modal options
+    'modalOptions' => [
+        // Specify the size of the modal.
+        // 'modal-md', 'modal-lg', or 'modal-xl'
+        // Default and recommended value is 'modal-lg'
+        'modalClass' => 'modal-lg',
+    ],
  ]);
-````
+```
 
+While much more options are supported for the widget,
+usually you can safely ignore them to accept the default values.
 
-Simple usage in _form file
------
-````php
- echo $form->field($model, '_image')->widget(\bilginnet\cropper\Cropper::className(), [
-    'cropperOptions' => [
-        'width' => 100, // must be specified
-        'height' => 100, // must be specified
-     ]
-]);
-````
+### 4) Options in detail
 
-
-
-jsOptions[]
------
-````php
- echo $form->field($model, '_image')->widget(\bilginnet\cropper\Cropper::className(), [
-    'cropperOptions' => [
-        'width' => 100, // must be specified
-        'height' => 100, // must be specified
-     ],
-     'jsOptions' => [
-        'pos' => View::POS_END, // default is POS_END if not specified
-        'onClick' => 'function(event){
-              // when click crop or close button 
-              // do something 
-        }'        
-     ],
-]);
-````
-
-
-
-Notes
------
-Don't forget to add this line into root in .htaccess file
-````
-RewriteRule ^uploads/(.*)$ uploads/$1 [L]
-````
-
-You can set crop image directly with javascript 
-
-Sample:
-````
-$('button').click(function() {
-   // #cropper-modal-$unique will show automatically when click the button
-   
-   // you must set uniqueId on widget
-   $('#cropper-url-change-input-' + uniqueId).val('image.jpeg').trigger('change');   
-});
-````
+YET TO BE DONE:
 
