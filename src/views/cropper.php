@@ -80,7 +80,6 @@ $template = str_replace('{preview}', $previewContent, $template);
         'unique' => $uniqueId,
         'cropperOptions' => $cropperOptions,
         'modalOptions' => $modalOptions,
-        'bsVer' => $bsVer,
     ]);
     echo $template;
     echo Html::hiddenInput('url-change-input-' . $uniqueId, '', [

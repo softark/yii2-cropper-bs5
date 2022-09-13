@@ -2,7 +2,6 @@
 /** @var $unique string */
 /** @var $cropperOptions [] */
 /** @var $modalOptions [] */
-/** @var $bsVer integer */
 
 $modalLabel = $modalOptions['title'] ?? Yii::t('cropper', 'Image Crop Editor');
 
