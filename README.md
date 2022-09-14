@@ -163,5 +163,42 @@ usually you can safely ignore them to accept the default values.
 
 ### 4) Options in detail
 
-YET TO BE DONE:
+#### uniqueId (string) optional / default = (empty)
+
+Unique Id of the cropper widget. It will be created automatically if it is empty.
+
+These elements will have unique Ids by appending it.
+
+* buttonId          = #cropper-select-button-$uniqueId
+* previewId         = #cropper-result-$uniqueId
+* modalId           = #cropper-modal-$uniqueId
+* imageId           = #cropper-image-$uniqueId
+* inputChangeUrlId  = #cropper-url-change-input-$uniqueId
+* cropButtonId      = #crop-button-$uniqueId
+* inputId           = #cropper-input-$uniqueId
+
+#### imageUrl (string) optional / default = (empty)
+
+The url of the source image file to crop.
+
+When you want to crop an existing image in `update` scenario, you can set this property.
+Otherwise you can safely ignore it.
+
+#### cropperOptions (array) some items are mandatory
+
+##### cropperOptions['width'] (int) mandatory
+
+The width of the image to be saved by the cropper.
+
+##### cropperOptions['height'] (int) mandatory
+
+The height of the image to be saved by the cropper.
+
+##### cropperOptions['buttonCssClass'] (string) optional / default = 'btn btn-primary'
+
+The css class of the buttons.
+
+
+
+  
 

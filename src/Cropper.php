@@ -70,7 +70,7 @@ class Cropper extends InputWidget
     public $label;
 
     /**
-     * default '{button} {preview}'
+     * default '{preview}{button}'
      *
      * @var string
      */
