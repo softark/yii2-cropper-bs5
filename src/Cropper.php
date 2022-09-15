@@ -14,15 +14,14 @@ use yii\web\View;
 class Cropper extends InputWidget
 {
     /**
-     * if it is empty will be create automatically
+     * If it is empty, it will be created automatically
      *
      * buttonId          = #cropper-select-button-$uniqueId
      * previewId         = #cropper-result-$uniqueId
      * modalId           = #cropper-modal-$uniqueId
      * imageId           = #cropper-image-$uniqueId
      * inputChangeUrlId  = #cropper-url-change-input-$uniqueId
-     * closeButtonId     = #close-button-$uniqueId
-     * cropButtonId      = #close-button-$uniqueId
+     * cropButtonId      = #crop-button-$uniqueId
      * inputId           = #cropper-input-$uniqueId
      *
      * @var string
@@ -42,7 +41,7 @@ class Cropper extends InputWidget
      *
      * preview false | array  // default false
      *     [
-     *          url @url      // set in update action // automatically will be set after crop
+     *          url @url      // set in update action // will be automatically set after crop
      *          width int     // default 100
      *          height int    // default height by aspectRatio
      *     ]
@@ -152,7 +151,6 @@ class Cropper extends InputWidget
         if (!isset($options['useFontAwesome'])) $options['useFontAwesome'] = false;
         if ($options['useFontAwesome']) {
             if (!isset($options['icons']['browse'])) $options['icons']['browse'] = '<i class="fa-solid fa-folder-open"></i>';
-            if (!isset($options['icons']['crop'])) $options['icons']['crop'] = '<i class="fa-solid fa-crop"></i>';
             if (!isset($options['icons']['ok'])) $options['icons']['ok'] = '<i class="fa-solid fa-check"></i>';
             if (!isset($options['icons']['cancel'])) $options['icons']['cancel'] = '<i class="fa-solid fa-xmark"></i>';
             if (!isset($options['icons']['zoom-in'])) $options['icons']['zoom-in'] = '<i class="fa-solid fa-magnifying-glass-plus"></i>';
@@ -169,7 +167,6 @@ class Cropper extends InputWidget
             if (!isset($options['icons']['cursor-move'])) $options['icons']['cursor-scroll'] = '<i class="fa-solid fa-arrows-up-down-left-right"></i>';
         } else {
             if (!isset($options['icons']['browse'])) $options['icons']['browse'] = '🗁';
-            if (!isset($options['icons']['crop'])) $options['icons']['crop'] = '⌗';
             if (!isset($options['icons']['ok'])) $options['icons']['ok'] = '✔';
             if (!isset($options['icons']['cancel'])) $options['icons']['cancel'] = '🗙';
             if (!isset($options['icons']['zoom-in'])) $options['icons']['zoom-in'] = '🔍+';
