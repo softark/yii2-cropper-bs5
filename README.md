@@ -1,6 +1,8 @@
 # yii2-cropper-bs5
 Yii2 Image Cropper Input Widget for bootstrap 5
 
+![](cropper-bs5.jpg)
+
 Features
 --------
 This is a wrapper of <a href="https://fengyuanchen.github.io/cropperjs/" target="_blank">fengyuanchen/Cropper.js</a>.
