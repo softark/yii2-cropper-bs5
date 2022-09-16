@@ -83,7 +83,7 @@ Add a virtual attribute for the image data from the cropper widget in your model
     }
 ```
 
-And write a function to save the image data from the cropper widget.
+And write a function to save the image data from the cropper widget to a file.
 
 ```php
     public function beforeSave($insert)
@@ -97,7 +97,7 @@ And write a function to save the image data from the cropper widget.
             $fileName = time() . '-' . rand(100000, 999999) . '.png';
             file_put_contents(Yii::getAlias('@imagesPath') . '/' . $fileName, $data);
 
-            // deleting old image if any
+            // deleting old image file if any
             // $this->filename is the real attribute for the filename
             // customize your code for your attribute
             if (!$this->isNewRecord && !empty($this->filename)) {
@@ -205,7 +205,7 @@ The cropper option array in `key => value` format. Some of them are mandatory.
 | cropperOptions['width']  | int  | yes      |               |
 | cropperOptions['height'] | int  | yes      |               |
 
-The dimensions of the image to be saved as the result of cropping.
+The dimensions of the image to be saved as the result of cropping. Both width and height are required.
 
 | name                             | type   | required | default value     |
 |----------------------------------|--------|----------|-------------------|
@@ -294,7 +294,7 @@ Optionally you can set your own text or hide it (by setting false).
 |----------|---------|----------|---------------------|
 | template | string  | no       | '{preview}{button}' |
 
-The template of the cropper widget. It recognized '{preview}' and '{button}'.
+The template of the cropper widget. It recognizes '{preview}' and '{button}'.
 
 ----
 #### modalOptions
@@ -318,21 +318,26 @@ The CSS class of the modal. You may set 'modal-md', 'modal-lg' or 'modal-xl'. Th
 
 | name                        | type   | required | default value |
 |-----------------------------|--------|----------|---------------|
-| modalOptions['canvasClass'] | string | no       | 'col-sm-8'    |
-| modalOptions['panelClass']  | string | no       | 'col-sm-4'    |
+| modalOptions['canvasClass'] | string | no       | 'col-8'       |
+| modalOptions['panelClass']  | string | no       | 'col-4'       |
 
 The CSS classes of the canvas and the control panel.
 
-Since the canvas and the control panel are layouted horizontally, the column widths should add up to 12 (e.g. 'col-sm-9' and 'col-sm-3').
+If you want the canvas and the control panel layouted horizontally, the column widths should add up to 12 (e.g. 'col-9' and 'col-3').
+
+If you want them layouted vertically, set 'col-12' to the both of them. 
 
 | name                          | type   | required | default value |
 |-------------------------------|--------|----------|---------------|
 | modalOptions['sizeDisp']      | bool   | no       | true          |
-| modalOptions['sizeDispClass'] | string | no       | 'col-sm-12'   |
+| modalOptions['sizeDispClass'] | string | no       | 'col-12'      |
 | modalOptions['posDisp']       | bool   | no       | true          |
-| modalOptions['posDispClass']  | string | no       | 'col-sm-8'    |
+| modalOptions['posDispClass']  | string | no       | 'col-8'       |
 
 The options that control the information display.
+
+Default values are optimized for a horizontally layouted large modal('modal-lg).
+You may want to customize them as you like.
 
 | name                          | type   | required | default value |
 |-------------------------------|--------|----------|---------------|
