@@ -81,6 +81,11 @@ Otherwise you can safely set it tu empty.
 
 Whether to use `FontAwesome` icons or not. It is false by default, and unicode symbol characters will be used.
 
+FontAwesome resources are not included in this extension.
+In order to use FontAwesome icons, you have to set up your project to utilize it outside this extension.
+See [Get Started with Font Awesome](https://fontawesome.com/start).
+
+
 ### icons
 | name                                         | Unicode | FontAwesome                                             |
 |----------------------------------------------|---------|---------------------------------------------------------|
@@ -100,7 +105,10 @@ Whether to use `FontAwesome` icons or not. It is false by default, and unicode s
 | cropperOptions['icons']['cursor-cross-hair'] | 🞡      | `<i class="fa-solid fa-plus"></i>`                      |
 | cropperOptions['icons']['cursor-move']       | ✥       | `<i class="fa-solid fa-arrows-up-down-left-right"></i>` |
 
-You may override any one of them.
+This table shows the default values of the icon definitions. 
+Depending on `cropperOpitons['useFontAwesome']`, different icons will be used.
+
+You may override any one of them. It's possible to mix unicode icons with fontAwesome ones.
 
 ## jsOptions
 | name      | type  | required | default value |
@@ -151,7 +159,8 @@ The title of the modal. It will be set automatically when it is not specified.
 |----------------------------|--------|----------|---------------|
 | modalOptions['modalClass'] | string | no       | 'modal-lg'    |
 
-The CSS class of the modal. You may set 'modal-md', 'modal-lg' or 'modal-xl'. The default value is 'modal-lg', and it is also the recommmended value.
+The CSS class of the modal. You may set 'modal-md', 'modal-lg' or 'modal-xl'.
+The default value is 'modal-lg', and it is also the recommended value.
 
 ### image canvas and control panel
 | name                        | type   | required | default value |
@@ -159,13 +168,15 @@ The CSS class of the modal. You may set 'modal-md', 'modal-lg' or 'modal-xl'. Th
 | modalOptions['canvasClass'] | string | no       | 'col-8'       |
 | modalOptions['panelClass']  | string | no       | 'col-4'       |
 
-The CSS classes of the canvas and the control panel.
+The CSS classes of the image canvas and the control panel.
 
-If you want the canvas and the control panel layout horizontally, the column widths should add up to 12 (e.g. 'col-9' and 'col-3').
+They are layout horizontally by default, with the relative widths of 8 to 4.
+You can set a different width ratio like 'col-9' and 'col-3' or 'col-7' and 'col-5'.
+The widths should add up to 12.
 
-If you want them layout vertically, set 'col-12' to the both of them. 
+If you want a vertical layout, set 'col-12' to both of them. 
 
-### size and position display
+### information display
 | name                          | type   | required | default value |
 |-------------------------------|--------|----------|---------------|
 | modalOptions['sizeDisp']      | bool   | no       | true          |
@@ -175,7 +186,7 @@ If you want them layout vertically, set 'col-12' to the both of them.
 
 The options that control the information display.
 
-Default values are optimized for a horizontally layouted large modal('modal-lg).
+The default values are optimized for a horizontally layout large modal('modal-lg).
 You may want to customize them as you like.
 
 ### control buttons
