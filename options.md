@@ -115,7 +115,7 @@ You may override any one of them. It's possible to mix unicode icons with fontAw
 |-----------|-------|----------|---------------|
 | jsOptions | array | no       | (empty)       |
 
-The javascript options associate with the cropper widget.
+The javascript options associated with the cropper widget.
 Currently only `jsOptions['onClik']` is supported.
 
 | name                 | type   | required | default value |
@@ -170,7 +170,7 @@ The default value is 'modal-lg', and it is also the recommended value.
 
 The CSS classes of the image canvas and the control panel.
 
-They are layout horizontally by default, with the relative widths of 8 to 4.
+They are laid out horizontally by default, with the relative widths of 8 to 4.
 You can set a different width ratio like 'col-9' and 'col-3' or 'col-7' and 'col-5'.
 The widths should add up to 12.
 
@@ -186,7 +186,7 @@ If you want a vertical layout, set 'col-12' to both of them.
 
 The options that control the information display.
 
-The default values are optimized for a horizontally layout large modal('modal-lg).
+The default values are optimized for a horizontally laid out large modal('modal-lg).
 You may want to customize them as you like.
 
 ### control buttons
